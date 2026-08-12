@@ -218,12 +218,16 @@
             setTimeout(function() { toast.classList.remove('show'); }, 2000);
         }
 
-        // Накопленные коины (в localStorage)
+        // Накопленные коины (в localStorage — только для UI, реальный баланс в боте)
         let pendingReward = 0;
 
         function updateBalance() {
-            let cached = parseInt(localStorage.getItem('user_coins') || '0', 10);
-            document.getElementById('coinBalance').textContent = cached + pendingReward;
+            // Реальный баланс передаётся через start_param (если бот открыл Web App с параметром)
+            let realBalance = 0;
+            if (startParam && startParam.startsWith('balance_')) {
+                realBalance = parseInt(startParam.replace('balance_', ''), 10) || 0;
+            }
+            document.getElementById('coinBalance').textContent = realBalance + pendingReward;
         }
 
         // Добавить награду и показать кнопку «Забрать»
@@ -245,11 +249,7 @@
                 showStatus('Не настроен username бота!');
                 return;
             }
-            // Сохраняем в localStorage
-            let cached = parseInt(localStorage.getItem('user_coins') || '0', 10);
-            cached += pendingReward;
-            localStorage.setItem('user_coins', String(cached));
-            // Открываем чат с ботом с параметром claim_N
+            // Открываем чат с ботом с параметром claim_N — бот начислит коины в user_coins.json
             const url = 'https://t.me/' + BOT_USERNAME + '?start=claim_' + pendingReward;
             if (tg) {
                 tg.openTelegramLink(url);
@@ -259,6 +259,7 @@
             pendingReward = 0;
             const claimSection = document.getElementById('claimSection');
             if (claimSection) claimSection.style.display = 'none';
+            updateBalance();
         }
 
         // === TGB Widget (Text-Graphic Block) ===

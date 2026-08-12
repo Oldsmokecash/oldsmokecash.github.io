@@ -157,7 +157,7 @@
         <b>5 коинов</b> за клик по рекламе (TGB)<br>
         <b>25 коинов</b> за просмотр Fullscreen рекламы<br>
         Нажмите «Забрать награду» после просмотра рекламы.<br>
-        <span style="opacity:0.5;font-size:11px">ver.1.0.4</span>
+        <span style="opacity:0.5;font-size:11px">ver.1.0.5</span>
     </div>
 
     <!-- TGB Widget -->
@@ -201,6 +201,12 @@
             tg.ready();
             tg.expand();
             tg.setBackgroundColor && tg.setBackgroundColor('#0f0f0f');
+        }
+
+        // Очистить URL от Telegram hash-параметров (#tgWebAppPlatform=...)
+        // TADS проверяет URL — если есть hash, он не совпадает с зарегистрированным доменом
+        if (window.location.hash && window.location.hash.indexOf('tgWebApp') !== -1) {
+            history.replaceState(null, '', window.location.pathname + window.location.search);
         }
 
         const user = tg ? tg.initDataUnsafe : null;

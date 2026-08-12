@@ -125,13 +125,13 @@
     <div class="info-card">
         <b>5 коинов</b> за клик по рекламе (TGB)<br>
         <b>25 коинов</b> за просмотр Fullscreen рекламы<br>
-        Коины начисляются автоматически после взаимодействия с рекламой.
+        Нажмите «Забрать коины» после просмотра рекламы.
     </div>
 
     <!-- TGB Widget -->
     <div class="ad-section">
         <div class="ad-section-title">Реклама — кликни и получи коины</div>
-        <div class="tads-container" id="tads-container-TGB_WIDGET_ID"></div>
+        <div class="tads-container" id="tads-container"></div>
     </div>
 
     <!-- Fullscreen Widget -->
@@ -147,12 +147,19 @@
 
     <div class="reward-toast" id="rewardToast">+N коинов!</div>
 
+    <!-- Кнопка забрать коины -->
+    <div class="ad-section" id="claimSection" style="display:none">
+        <button class="btn btn-reward" id="claimBtn">
+            🪙 Забрать коины
+        </button>
+    </div>
+
     <script>
     (function() {
         // === CONFIG ===
-        const TGB_WIDGET_ID = 'YOUR_TGB_WIDGET_ID';      // Replace with your TGB widget ID
-        const FULLSCREEN_WIDGET_ID = 'YOUR_FULLSCREEN_WIDGET_ID'; // Replace with your Fullscreen widget ID
-        const WEBHOOK_BASE = ''; // Optional: if webhook runs on same domain
+        const TGB_WIDGET_ID = '11464';                    // TGB баннер
+        const FULLSCREEN_WIDGET_ID = '11466';              // Fullscreen реклама
+        const BOT_USERNAME = 'MusorkaBMB_bot';             // username бота (без @)
         const COIN_PER_TGB_CLICK = 5;
         const COIN_PER_FULLSCREEN = 25;
 
@@ -180,25 +187,47 @@
             setTimeout(function() { toast.classList.remove('show'); }, 2000);
         }
 
+        // Накопленные коины (в localStorage)
+        let pendingReward = 0;
+
         function updateBalance() {
-            if (!telegramId) return;
-            // Try to get balance from bot API (via Telegram WebApp data)
-            // We use a simple approach: localStorage cache + webhook confirmation
             let cached = parseInt(localStorage.getItem('user_coins') || '0', 10);
-            document.getElementById('coinBalance').textContent = cached;
+            document.getElementById('coinBalance').textContent = cached + pendingReward;
         }
 
-        // Notify bot about reward (optional, if webhook is configured)
-        function notifyReward(amount, type) {
-            if (!telegramId) return;
-            // The TADS webhook will also notify the bot server-side.
-            // This is a client-side fallback for instant UI feedback.
-            try {
-                let cached = parseInt(localStorage.getItem('user_coins') || '0', 10);
-                cached += amount;
-                localStorage.setItem('user_coins', String(cached));
-                updateBalance();
-            } catch(e) {}
+        // Добавить награду и показать кнопку «Забрать»
+        function addReward(amount, type) {
+            pendingReward += amount;
+            showRewardToast(amount);
+            updateBalance();
+            // Показать кнопку «Забрать коины»
+            const claimSection = document.getElementById('claimSection');
+            if (claimSection) claimSection.style.display = 'block';
+            const claimBtn = document.getElementById('claimBtn');
+            if (claimBtn) claimBtn.textContent = '🪙 Забрать ' + pendingReward + ' коинов';
+        }
+
+        // Отправить награду боту через Telegram deep linking
+        function claimRewards() {
+            if (pendingReward <= 0) return;
+            if (BOT_USERNAME === 'YOUR_BOT_USERNAME') {
+                showStatus('Не настроен username бота!');
+                return;
+            }
+            // Сохраняем в localStorage
+            let cached = parseInt(localStorage.getItem('user_coins') || '0', 10);
+            cached += pendingReward;
+            localStorage.setItem('user_coins', String(cached));
+            // Открываем чат с ботом с параметром claim_N
+            const url = 'https://t.me/' + BOT_USERNAME + '?start=claim_' + pendingReward;
+            if (tg) {
+                tg.openTelegramLink(url);
+            } else {
+                window.open(url, '_blank');
+            }
+            pendingReward = 0;
+            const claimSection = document.getElementById('claimSection');
+            if (claimSection) claimSection.style.display = 'none';
         }
 
         // === TGB Widget (Text-Graphic Block) ===
@@ -213,9 +242,8 @@
             };
 
             const onClickRewardCallback = function(adId) {
-                showRewardToast(COIN_PER_TGB_CLICK);
-                notifyReward(COIN_PER_TGB_CLICK, 'tgb_click');
-                showStatus('Получено ' + COIN_PER_TGB_CLICK + ' коинов за клик!');
+                addReward(COIN_PER_TGB_CLICK, 'tgb_click');
+                showStatus('+' + COIN_PER_TGB_CLICK + ' коинов за клик! Нажмите «Забрать коины»');
             };
 
             try {
@@ -251,9 +279,8 @@
             if (!btn) return;
 
             const onShowRewardCallback = function(result) {
-                showRewardToast(COIN_PER_FULLSCREEN);
-                notifyReward(COIN_PER_FULLSCREEN, 'fullscreen_view');
-                showStatus('Получено ' + COIN_PER_FULLSCREEN + ' коинов за просмотр!');
+                addReward(COIN_PER_FULLSCREEN, 'fullscreen_view');
+                showStatus('+' + COIN_PER_FULLSCREEN + ' коинов за просмотр! Нажмите «Забрать коины»');
             };
 
             const onAdsNotFound = function() {
@@ -287,6 +314,12 @@
                         });
                 }
             });
+        }
+
+        // === Кнопка «Забрать коины» ===
+        const claimBtn = document.getElementById('claimBtn');
+        if (claimBtn) {
+            claimBtn.addEventListener('click', claimRewards);
         }
 
         // === Init ===

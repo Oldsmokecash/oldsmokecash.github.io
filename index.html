@@ -269,11 +269,13 @@
                 return;
             }
 
-            const adsNotFoundCallback = function() {
-                showTgbStatus('TGB: реклама недоступна, попробуйте позже');
+            const adsNotFoundCallback = function(reason) {
+                console.log('[TGB] onAdsNotFound:', reason);
+                showTgbStatus('TGB: нет рекламы. Ответ: ' + JSON.stringify(reason));
             };
 
             const onClickRewardCallback = function(adId) {
+                console.log('[TGB] onClickReward:', adId);
                 addReward(COIN_PER_TGB_CLICK, 'tgb_click');
                 showTgbStatus('TGB: +' + COIN_PER_TGB_CLICK + ' коинов за клик!');
             };
@@ -288,11 +290,11 @@
                 });
 
                 adController.loadAd()
-                    .then(function() { return adController.showAd(); })
-                    .then(function() { showTgbStatus('TGB: реклама загружена — кликните для награды'); })
+                    .then(function(res) { console.log('[TGB] loadAd result:', res); return adController.showAd(); })
+                    .then(function(res) { console.log('[TGB] showAd result:', res); showTgbStatus('TGB: реклама загружена — кликните для награды'); })
                     .catch(function(err) {
-                        console.log('TGB error:', err);
-                        adsNotFoundCallback();
+                        console.log('[TGB] error:', err);
+                        showTgbStatus('TGB: ошибка: ' + JSON.stringify(err));
                     });
             } catch(e) {
                 console.log('TGB init error:', e);
@@ -311,17 +313,18 @@
             if (!btn) return;
 
             const onShowRewardCallback = function(result) {
-                // Скрыть overlay после просмотра
+                console.log('[FS] onShowReward:', result);
                 var overlay = document.getElementById('fullscreen-ad-container');
                 if (overlay) overlay.classList.remove('active');
                 addReward(COIN_PER_FULLSCREEN, 'fullscreen_view');
                 showFullscreenStatus('Fullscreen: +' + COIN_PER_FULLSCREEN + ' коинов за просмотр!');
             };
 
-            const onAdsNotFound = function() {
+            const onAdsNotFound = function(reason) {
+                console.log('[FS] onAdsNotFound:', reason);
                 var overlay = document.getElementById('fullscreen-ad-container');
                 if (overlay) overlay.classList.remove('active');
-                showFullscreenStatus('Fullscreen: реклама недоступна, попробуйте позже');
+                showFullscreenStatus('Fullscreen: нет рекламы. Ответ: ' + JSON.stringify(reason));
             };
 
             let adController = null;
@@ -350,14 +353,12 @@
 
                 if (adController) {
                     adController.loadAd()
-                        .then(function() { return adController.showAd(); })
-                        .then(function() {
-                            showFullscreenStatus('Fullscreen: реклама показывается...');
-                        })
+                        .then(function(res) { console.log('[FS] loadAd result:', res); return adController.showAd(); })
+                        .then(function(res) { console.log('[FS] showAd result:', res); showFullscreenStatus('Fullscreen: реклама показывается...'); })
                         .catch(function(result) {
-                            console.log('Fullscreen show error:', result);
+                            console.log('[FS] show error:', result);
                             if (overlay) overlay.classList.remove('active');
-                            onAdsNotFound();
+                            showFullscreenStatus('Fullscreen: ошибка: ' + JSON.stringify(result));
                         });
                 }
             });

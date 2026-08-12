@@ -131,7 +131,7 @@
     <!-- TGB Widget -->
     <div class="ad-section">
         <div class="ad-section-title">Реклама — кликни и получи коины</div>
-        <div class="tads-container" id="tads-container"></div>
+        <div class="tads-container" id="tads-container-11464"></div>
     </div>
 
     <!-- Fullscreen Widget -->
@@ -250,7 +250,7 @@
                 const adController = window.tads.init({
                     widgetId: TGB_WIDGET_ID,
                     type: 'static',
-                    debug: true,
+                    debug: false,
                     onClickReward: onClickRewardCallback,
                     onAdsNotFound: adsNotFoundCallback
                 });
@@ -291,9 +291,9 @@
 
             try {
                 adController = window.tads.init({
-                    widgetId: FULLSCREEN_WIDGET_ID,
-                    type: 'fullscreen',
-                    debug: false,
+                  widgetId: FULLSCREEN_WIDGET_ID,
+                  type: 'fullscreen',
+                  debug: false,
                     onShowReward: onShowRewardCallback,
                     onAdsNotFound: onAdsNotFound
                 });

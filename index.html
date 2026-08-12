@@ -157,8 +157,8 @@
     <script>
     (function() {
         // === CONFIG ===
-        const TGB_WIDGET_ID = '11464';                    // TGB баннер
-        const FULLSCREEN_WIDGET_ID = '11466';              // Fullscreen реклама
+        const TGB_WIDGET_ID = 11464;                     // TGB баннер
+        const FULLSCREEN_WIDGET_ID = 11466;               // Fullscreen реклама
         const BOT_USERNAME = 'MusorkaBMB_bot';             // username бота (без @)
         const COIN_PER_TGB_CLICK = 5;
         const COIN_PER_FULLSCREEN = 25;
@@ -210,7 +210,7 @@
         // Отправить награду боту через Telegram deep linking
         function claimRewards() {
             if (pendingReward <= 0) return;
-            if (BOT_USERNAME === 'YOUR_BOT_USERNAME') {
+            if (!BOT_USERNAME) {
                 showStatus('Не настроен username бота!');
                 return;
             }
@@ -232,7 +232,7 @@
 
         // === TGB Widget (Text-Graphic Block) ===
         function initTGB() {
-            if (TGB_WIDGET_ID === 'YOUR_TGB_WIDGET_ID') {
+            if (!TGB_WIDGET_ID) {
                 showStatus('TGB widget ID не настроен');
                 return;
             }
@@ -250,7 +250,7 @@
                 const adController = window.tads.init({
                     widgetId: TGB_WIDGET_ID,
                     type: 'static',
-                    debug: false,
+                    debug: true,
                     onClickReward: onClickRewardCallback,
                     onAdsNotFound: adsNotFoundCallback
                 });
@@ -270,7 +270,7 @@
 
         // === Fullscreen Widget ===
         function initFullscreen() {
-            if (FULLSCREEN_WIDGET_ID === 'YOUR_FULLSCREEN_WIDGET_ID') {
+            if (!FULLSCREEN_WIDGET_ID) {
                 showStatus('Fullscreen widget ID не настроен');
                 return;
             }

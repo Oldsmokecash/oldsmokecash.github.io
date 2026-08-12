@@ -75,6 +75,16 @@
         .btn-reward {
             background: linear-gradient(135deg, #ffd700, #ff9500);
             color: #000;
+            font-size: 18px;
+            font-weight: 700;
+            box-shadow: 0 4px 16px rgba(255, 215, 0, 0.3);
+        }
+        .btn-claim {
+            background: linear-gradient(135deg, #00e676, #00c853);
+            color: #000;
+            font-size: 18px;
+            font-weight: 700;
+            box-shadow: 0 4px 16px rgba(0, 230, 118, 0.3);
         }
         .status-text {
             font-size: 14px;
@@ -121,7 +131,7 @@
             width: 100vw; height: 100vh;
             z-index: 10000;
             display: none;
-            background: rgba(0,0,0,0.95);
+            background: #000;
         }
         .tads-fullscreen-overlay.active { display: flex; align-items: center; justify-content: center; }
         .tads-fullscreen-overlay iframe,
@@ -170,8 +180,8 @@
 
     <!-- Кнопка забрать коины -->
     <div class="ad-section" id="claimSection" style="display:none">
-        <button class="btn btn-reward" id="claimBtn">
-            🪙 Забрать коины
+        <button class="btn btn-claim" id="claimBtn">
+            🪙 Забрать награду
         </button>
     </div>
 
@@ -189,10 +199,12 @@
         if (tg) {
             tg.ready();
             tg.expand();
+            tg.setBackgroundColor && tg.setBackgroundColor('#0f0f0f');
         }
 
         const user = tg ? tg.initDataUnsafe : null;
         const telegramId = user ? String(user.id) : null;
+        // start_param может быть 'balance_N' или 'claim_N'
         const startParam = user ? (user.start_param || '') : '';
 
         // === UI helpers ===
@@ -239,7 +251,7 @@
             const claimSection = document.getElementById('claimSection');
             if (claimSection) claimSection.style.display = 'block';
             const claimBtn = document.getElementById('claimBtn');
-            if (claimBtn) claimBtn.textContent = '🪙 Забрать ' + pendingReward + ' коинов';
+            if (claimBtn) claimBtn.textContent = '🪙 Забрать награду (' + pendingReward + ' коинов)';
         }
 
         // Отправить награду боту через Telegram deep linking

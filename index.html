@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Реклама — коины</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script>
+        // Очистить URL от Telegram hash-параметров ДО загрузки TADS SDK
+        if (window.location.hash && window.location.hash.indexOf('tgWebApp') !== -1) {
+            history.replaceState(null, '', window.location.pathname + window.location.search);
+        }
+    </script>
     <script src="https://w.tads.me/widget.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -157,7 +163,7 @@
         <b>5 коинов</b> за клик по рекламе (TGB)<br>
         <b>25 коинов</b> за просмотр Fullscreen рекламы<br>
         Нажмите «Забрать награду» после просмотра рекламы.<br>
-        <span style="opacity:0.5;font-size:11px">ver.1.0.5</span>
+        <span style="opacity:0.5;font-size:11px">ver.1.0.6</span>
     </div>
 
     <!-- TGB Widget -->
@@ -201,12 +207,6 @@
             tg.ready();
             tg.expand();
             tg.setBackgroundColor && tg.setBackgroundColor('#0f0f0f');
-        }
-
-        // Очистить URL от Telegram hash-параметров (#tgWebAppPlatform=...)
-        // TADS проверяет URL — если есть hash, он не совпадает с зарегистрированным доменом
-        if (window.location.hash && window.location.hash.indexOf('tgWebApp') !== -1) {
-            history.replaceState(null, '', window.location.pathname + window.location.search);
         }
 
         const user = tg ? tg.initDataUnsafe : null;

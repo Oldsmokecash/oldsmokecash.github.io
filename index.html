@@ -264,8 +264,17 @@
 
         // === TGB Widget (Text-Graphic Block) ===
         function initTGB() {
+            showTgbStatus('TGB: инициализация...');
+            console.log('[TGB] window.tads:', typeof window.tads);
+            console.log('[TGB] window.tads.init:', window.tads ? typeof window.tads.init : 'N/A');
+
+            if (!window.tads || !window.tads.init) {
+                showTgbStatus('TGB: SDK не загружен! Проверьте https://w.tads.me/widget.js');
+                console.error('[TGB] TADS SDK не найден!');
+                return;
+            }
             if (!TGB_WIDGET_ID) {
-                showStatus('TGB widget ID не настроен');
+                showTgbStatus('TGB: widget ID не настроен');
                 return;
             }
 
@@ -281,6 +290,7 @@
             };
 
             try {
+                console.log('[TGB] init with widgetId:', TGB_WIDGET_ID, 'type: static');
                 const adController = window.tads.init({
                     widgetId: TGB_WIDGET_ID,
                     type: 'static',
@@ -288,24 +298,30 @@
                     onClickReward: onClickRewardCallback,
                     onAdsNotFound: adsNotFoundCallback
                 });
+                console.log('[TGB] adController:', adController);
 
                 adController.loadAd()
-                    .then(function(res) { console.log('[TGB] loadAd result:', res); return adController.showAd(); })
-                    .then(function(res) { console.log('[TGB] showAd result:', res); showTgbStatus('TGB: реклама загружена — кликните для награды'); })
+                    .then(function(res) { console.log('[TGB] loadAd OK:', res); return adController.showAd(); })
+                    .then(function(res) { console.log('[TGB] showAd OK:', res); showTgbStatus('TGB: реклама загружена — кликните для награды'); })
                     .catch(function(err) {
                         console.log('[TGB] error:', err);
                         showTgbStatus('TGB: ошибка: ' + JSON.stringify(err));
                     });
             } catch(e) {
-                console.log('TGB init error:', e);
-                showStatus('Ошибка загрузки рекламы');
+                console.log('[TGB] init error:', e);
+                showTgbStatus('TGB: init error: ' + e.message);
             }
         }
 
         // === Fullscreen Widget ===
         function initFullscreen() {
+            console.log('[FS] window.tads:', typeof window.tads);
+            if (!window.tads || !window.tads.init) {
+                showFullscreenStatus('Fullscreen: SDK не загружен!');
+                return;
+            }
             if (!FULLSCREEN_WIDGET_ID) {
-                showStatus('Fullscreen widget ID не настроен');
+                showFullscreenStatus('Fullscreen: widget ID не настроен');
                 return;
             }
 
@@ -330,6 +346,7 @@
             let adController = null;
 
             try {
+                console.log('[FS] init with widgetId:', FULLSCREEN_WIDGET_ID, 'type: fullscreen');
                 adController = window.tads.init({
                   widgetId: FULLSCREEN_WIDGET_ID,
                   type: 'fullscreen',
@@ -337,9 +354,10 @@
                     onShowReward: onShowRewardCallback,
                     onAdsNotFound: onAdsNotFound
                 });
+                console.log('[FS] adController:', adController);
             } catch(e) {
-                console.log('Fullscreen init error:', e);
-                showStatus('Ошибка инициализации Fullscreen');
+                console.log('[FS] init error:', e);
+                showFullscreenStatus('Fullscreen: init error: ' + e.message);
                 return;
             }
 

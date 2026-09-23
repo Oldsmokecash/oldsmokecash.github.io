@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Реклама — коины</title>
+    <title>Реклама — награды</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
         // Очистить URL от Telegram hash-параметров ДО загрузки TADS SDK
@@ -43,6 +43,12 @@
             opacity: 0.7;
             text-transform: uppercase;
             letter-spacing: 1px;
+        }
+        .bonus-badge {
+            font-size: 18px;
+            font-weight: 600;
+            color: #ffd700;
+            margin: 8px 0;
         }
         .ad-section {
             width: 100%;
@@ -155,15 +161,16 @@
 </head>
 <body>
     <div class="header">
-        <div class="coin-label">Ваши коины</div>
+        <div class="coin-label" id="headerLabel">Ваши коины</div>
         <div class="coin-balance" id="coinBalance">--</div>
+        <div class="bonus-badge" id="bonusBadge" style="display:none"></div>
     </div>
 
-    <div class="info-card">
+    <div class="info-card" id="infoCard">
         <b>5 коинов</b> за клик по рекламе (TGB)<br>
         <b>25 коинов</b> за просмотр Fullscreen рекламы<br>
         Нажмите «Забрать награду» после просмотра рекламы.<br>
-        <span style="opacity:0.5;font-size:11px">ver.1.0.7</span>
+        <span style="opacity:0.5;font-size:11px">ver.1.1.0</span>
     </div>
 
     <!-- TGB Widget -->
@@ -185,7 +192,15 @@
 
     <div class="reward-toast" id="rewardToast">+N коинов!</div>
 
-    <!-- Кнопка забрать коины -->
+    <!-- Выбор бонуса vBTC (виден когда бонус ещё не выбран) -->
+    <div class="ad-section" id="vbtcBonusSection">
+        <div class="ad-section-title">🎁 Бонусы для игры ₿ vBTC</div>
+        <button class="btn btn-primary" data-bonus="double_mining">⛏️ Удвоенный майнинг x1.5</button>
+        <button class="btn btn-primary" data-bonus="power_boost">⚡ Буст мощности (15 мин)</button>
+        <button class="btn btn-primary" data-bonus="extra_activations">➕ Доп. активация майнинга</button>
+    </div>
+
+    <!-- Кнопка забрать награду -->
     <div class="ad-section" id="claimSection" style="display:none">
         <button class="btn btn-claim" id="claimBtn">
             🪙 Забрать награду
@@ -201,6 +216,13 @@
         const COIN_PER_TGB_CLICK = 5;
         const COIN_PER_FULLSCREEN = 25;
 
+        // Подписи vBTC-бонусов (для отображения)
+        const VBTC_BONUS_LABELS = {
+            'double_mining': '⛏️ Удвоенный майнинг x1.5',
+            'power_boost': '⚡ Буст мощности',
+            'extra_activations': '➕ Доп. активация майнинга'
+        };
+
         // === Telegram WebApp init ===
         const tg = window.Telegram ? window.Telegram.WebApp : null;
         if (tg) {
@@ -213,6 +235,11 @@
         const telegramId = user ? String(user.id) : null;
         // start_param может быть 'balance_N' или 'claim_N'
         const startParam = user ? (user.start_param || '') : '';
+
+        // === Режим vBTC-бонуса: ?vbtc_bonus=<type> в query string ===
+        const urlParams = new URLSearchParams(window.location.search);
+        const vbtcBonus = urlParams.get('vbtc_bonus') || '';
+        const isVbtcMode = vbtcBonus && VBTC_BONUS_LABELS.hasOwnProperty(vbtcBonus);
 
         // === UI helpers ===
         function showStatus(msg) {
@@ -239,9 +266,11 @@
 
         // Накопленные коины (в localStorage — только для UI, реальный баланс в боте)
         let pendingReward = 0;
+        // В режиме vBTC-бонуса засчитываем факт просмотра (не коины)
+        let adWatched = false;
 
         function updateBalance() {
-            // Реальный баланс передаётся через start_param (если бот открыл Web App с параметром)
+            if (isVbtcMode) return; // в бонусном режиме баланс коинов не показываем
             let realBalance = 0;
             if (startParam && startParam.startsWith('balance_')) {
                 realBalance = parseInt(startParam.replace('balance_', ''), 10) || 0;
@@ -251,10 +280,19 @@
 
         // Добавить награду и показать кнопку «Забрать»
         function addReward(amount, type) {
+            if (isVbtcMode) {
+                // Бонусный режим: просмотр засчитан → показать «Забрать бонус»
+                adWatched = true;
+                showRewardToast(amount); // визуальный фидбек
+                const claimSection = document.getElementById('claimSection');
+                if (claimSection) claimSection.style.display = 'block';
+                const claimBtn = document.getElementById('claimBtn');
+                if (claimBtn) claimBtn.textContent = '🎁 Забрать бонус: ' + VBTC_BONUS_LABELS[vbtcBonus];
+                return;
+            }
             pendingReward += amount;
             showRewardToast(amount);
             updateBalance();
-            // Показать кнопку «Забрать коины»
             const claimSection = document.getElementById('claimSection');
             if (claimSection) claimSection.style.display = 'block';
             const claimBtn = document.getElementById('claimBtn');
@@ -263,19 +301,27 @@
 
         // Отправить награду боту через Telegram deep linking
         function claimRewards() {
-            if (pendingReward <= 0) return;
             if (!BOT_USERNAME) {
                 showStatus('Не настроен username бота!');
                 return;
             }
-            // Открываем чат с ботом с параметром claim_N — бот начислит коины в user_coins.json
-            const url = 'https://t.me/' + BOT_USERNAME + '?start=claim_' + pendingReward;
+            let url;
+            if (isVbtcMode) {
+                if (!adWatched) return;
+                // vBTC-бонус: deep link активирует бонус в игре
+                url = 'https://t.me/' + BOT_USERNAME + '?start=vbtc_' + vbtcBonus;
+            } else {
+                if (pendingReward <= 0) return;
+                // Коины: deep link начисляет коины в user_coins.json
+                url = 'https://t.me/' + BOT_USERNAME + '?start=claim_' + pendingReward;
+            }
             if (tg) {
                 tg.openTelegramLink(url);
             } else {
                 window.open(url, '_blank');
             }
             pendingReward = 0;
+            adWatched = false;
             const claimSection = document.getElementById('claimSection');
             if (claimSection) claimSection.style.display = 'none';
             updateBalance();
@@ -352,7 +398,7 @@
                 var overlay = document.getElementById('fullscreen-ad-container');
                 if (overlay) overlay.classList.remove('active');
                 addReward(COIN_PER_FULLSCREEN, 'fullscreen_view');
-                showFullscreenStatus('Fullscreen: +' + COIN_PER_FULLSCREEN + ' коинов за просмотр!');
+                showFullscreenStatus('Fullscreen: реклама просмотрена!');
             };
 
             const onAdsNotFound = function(reason) {
@@ -382,9 +428,7 @@
 
             btn.addEventListener('click', function() {
                 showFullscreenStatus('Fullscreen: загрузка рекламы...');
-                // Раскрыть Web App на весь экран перед показом рекламы
                 if (tg) { tg.expand(); }
-                // Показать overlay
                 var overlay = document.getElementById('fullscreen-ad-container');
                 if (overlay) overlay.classList.add('active');
 
@@ -401,7 +445,39 @@
             });
         }
 
-        // === Кнопка «Забрать коины» ===
+        // === Режим vBTC-бонуса: настройка UI ===
+        if (isVbtcMode) {
+            document.getElementById('headerLabel').textContent = 'Бонус за рекламу';
+            document.getElementById('coinBalance').textContent = '🎁';
+            var badge = document.getElementById('bonusBadge');
+            badge.style.display = 'block';
+            badge.textContent = VBTC_BONUS_LABELS[vbtcBonus];
+            document.getElementById('infoCard').innerHTML =
+                '<b>' + VBTC_BONUS_LABELS[vbtcBonus] + '</b><br>' +
+                'Посмотрите рекламу (клик по баннеру или fullscreen),<br>' +
+                'затем нажмите «Забрать бонус».<br>' +
+                '<span style="opacity:0.5;font-size:11px">ver.1.2.0</span>';
+            var fsBtn = document.getElementById('fullscreenBtn');
+            if (fsBtn) fsBtn.textContent = '🎬 Смотреть рекламу для бонуса';
+            // Бонус уже выбран — скрываем меню выбора
+            var bonusSection = document.getElementById('vbtcBonusSection');
+            if (bonusSection) bonusSection.style.display = 'none';
+        }
+
+        // === Кнопки выбора vBTC-бонуса ===
+        document.querySelectorAll('#vbtcBonusSection [data-bonus]').forEach(function(b) {
+            b.addEventListener('click', function() {
+                var t = b.getAttribute('data-bonus');
+                if (window.location.search.indexOf('vbtc_bonus=') !== -1) {
+                    // уже в бонусном режиме — просто сменить тип
+                    window.location.search = '?vbtc_bonus=' + t;
+                } else {
+                    window.location.search = '?vbtc_bonus=' + t;
+                }
+            });
+        });
+
+        // === Кнопка «Забрать награду» ===
         const claimBtn = document.getElementById('claimBtn');
         if (claimBtn) {
             claimBtn.addEventListener('click', claimRewards);

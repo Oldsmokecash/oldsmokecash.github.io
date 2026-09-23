@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Реклама — награды</title>
+    <title>vBTC — Бонусы и награды</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
         // Очистить URL от Telegram hash-параметров ДО загрузки TADS SDK
@@ -24,476 +24,352 @@
             align-items: center;
             padding: 20px;
         }
-        .header {
-            text-align: center;
-            margin-bottom: 24px;
-            width: 100%;
-        }
+        .header { text-align: center; margin-bottom: 20px; width: 100%; }
         .coin-balance {
-            font-size: 48px;
-            font-weight: 700;
+            font-size: 48px; font-weight: 700;
             background: linear-gradient(135deg, #ffd700, #ffaa00);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin: 8px 0;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text; margin: 8px 0;
         }
-        .coin-label {
-            font-size: 14px;
-            opacity: 0.7;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .bonus-badge {
-            font-size: 18px;
-            font-weight: 600;
-            color: #ffd700;
-            margin: 8px 0;
-        }
-        .ad-section {
-            width: 100%;
-            max-width: 500px;
-            margin: 16px 0;
-        }
-        .ad-section-title {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 12px;
-            opacity: 0.9;
-        }
-        .tads-container {
-            width: 100%;
-            min-height: 120px;
-            border-radius: 12px;
-            overflow: hidden;
-        }
-        .btn {
-            width: 100%;
-            max-width: 500px;
-            padding: 16px;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: opacity 0.2s;
-            margin: 8px 0;
-        }
-        .btn:active { opacity: 0.7; }
-        .btn-primary {
-            background: var(--tg-theme-button-color, #2481cc);
-            color: var(--tg-theme-button-text-color, #fff);
-        }
-        .btn-reward {
-            background: linear-gradient(135deg, #ffd700, #ff9500);
-            color: #000;
-            font-size: 18px;
-            font-weight: 700;
-            box-shadow: 0 4px 16px rgba(255, 215, 0, 0.3);
-        }
-        .btn-claim {
-            background: linear-gradient(135deg, #00e676, #00c853);
-            color: #000;
-            font-size: 18px;
-            font-weight: 700;
-            box-shadow: 0 4px 16px rgba(0, 230, 118, 0.3);
-        }
-        .status-text {
-            font-size: 14px;
-            opacity: 0.6;
-            text-align: center;
-            margin: 12px 0;
-            min-height: 20px;
-        }
-        .reward-toast {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            background: linear-gradient(135deg, #ffd700, #ff9500);
-            color: #000;
-            padding: 24px 40px;
-            border-radius: 20px;
-            font-size: 24px;
-            font-weight: 700;
-            box-shadow: 0 8px 32px rgba(255, 215, 0, 0.4);
-            z-index: 9999;
-            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        .reward-toast.show {
-            transform: translate(-50%, -50%) scale(1);
-        }
-        .info-card {
-            background: var(--tg-theme-secondary-bg-color, #1a1a1a);
-            border-radius: 12px;
-            padding: 16px;
-            width: 100%;
-            max-width: 500px;
-            margin: 8px 0;
-            font-size: 13px;
-            line-height: 1.6;
-            opacity: 0.8;
-        }
-        .info-card b { color: #ffd700; }
-
-        /* TADS Fullscreen overlay */
-        .tads-fullscreen-overlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            width: 100vw; height: 100vh;
-            z-index: 10000;
-            display: none;
-            background: #000;
-        }
-        .tads-fullscreen-overlay.active { display: flex; align-items: center; justify-content: center; }
-        .tads-fullscreen-overlay iframe,
-        .tads-fullscreen-overlay div,
-        .tads-fullscreen-overlay img {
-            max-width: 100%; max-height: 100%; width: 100%; height: 100%; object-fit: contain;
-        }
-
-        /* TGB container auto-fit */
-        .tads-container { min-height: 100px; }
+        .coin-label { font-size: 14px; opacity: 0.7; text-transform: uppercase; letter-spacing: 1px; }
+        .bonus-badge { font-size: 18px; font-weight: 600; color: #ffd700; margin: 8px 0; }
+        .section { width: 100%; max-width: 500px; margin: 14px 0; }
+        .section-title { font-size: 16px; font-weight: 600; margin-bottom: 10px; opacity: 0.9; }
+        .tads-container { width: 100%; min-height: 100px; border-radius: 12px; overflow: hidden; }
         .tads-container > * { width: 100% !important; max-width: 100% !important; }
         .tads-container img { max-width: 100% !important; height: auto !important; border-radius: 8px; }
         .tads-container iframe { width: 100% !important; max-width: 100% !important; border: none; }
+        .btn {
+            width: 100%; max-width: 500px; padding: 16px; border: none; border-radius: 12px;
+            font-size: 16px; font-weight: 600; cursor: pointer; margin: 6px 0;
+            transition: opacity 0.2s; display: block; text-align: center;
+        }
+        .btn:active { opacity: 0.7; }
+        .btn-primary { background: var(--tg-theme-button-color, #2481cc); color: var(--tg-theme-button-text-color, #fff); }
+        .btn-reward {
+            background: linear-gradient(135deg, #ffd700, #ff9500); color: #000;
+            font-size: 18px; font-weight: 700; box-shadow: 0 4px 16px rgba(255,215,0,0.3);
+        }
+        .btn-claim {
+            background: linear-gradient(135deg, #00e676, #00c853); color: #000;
+            font-size: 18px; font-weight: 700; box-shadow: 0 4px 16px rgba(0,230,118,0.3);
+        }
+        .btn-dim { background: #2a2a2a; color: #888; }
+        .status-text { font-size: 14px; opacity: 0.6; text-align: center; margin: 10px 0; min-height: 20px; }
+        .reward-toast {
+            position: fixed; top: 50%; left: 50%;
+            transform: translate(-50%,-50%) scale(0);
+            background: linear-gradient(135deg,#ffd700,#ff9500); color:#000;
+            padding: 24px 40px; border-radius: 20px; font-size: 24px; font-weight: 700;
+            box-shadow: 0 8px 32px rgba(255,215,0,0.4); z-index: 9999;
+            transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        .reward-toast.show { transform: translate(-50%,-50%) scale(1); }
+        .info-card {
+            background: var(--tg-theme-secondary-bg-color,#1a1a1a); border-radius: 12px;
+            padding: 16px; width: 100%; max-width: 500px; margin: 8px 0;
+            font-size: 13px; line-height: 1.6; opacity: 0.85;
+        }
+        .info-card b { color: #ffd700; }
+        .tads-fullscreen-overlay {
+            position: fixed; inset: 0; width: 100vw; height: 100vh;
+            z-index: 10000; display: none; background: #000;
+        }
+        .tads-fullscreen-overlay.active { display: flex; align-items: center; justify-content: center; }
+        .tads-fullscreen-overlay iframe, .tads-fullscreen-overlay div, .tads-fullscreen-overlay img {
+            max-width: 100%; max-height: 100%; width: 100%; height: 100%; object-fit: contain;
+        }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
     <div class="header">
-        <div class="coin-label" id="headerLabel">Ваши коины</div>
-        <div class="coin-balance" id="coinBalance">--</div>
+        <div class="coin-label" id="headerLabel">₿ vBTC — Бонусы</div>
+        <div class="coin-balance" id="coinBalance">🎁</div>
         <div class="bonus-badge" id="bonusBadge" style="display:none"></div>
     </div>
 
     <div class="info-card" id="infoCard">
-        <b>5 коинов</b> за клик по рекламе (TGB)<br>
-        <b>25 коинов</b> за просмотр Fullscreen рекламы<br>
-        Нажмите «Забрать награду» после просмотра рекламы.<br>
-        <span style="opacity:0.5;font-size:11px">ver.1.1.0</span>
+        Выберите бонус → посмотрите рекламу → заберите награду.<br>
+        <span style="opacity:0.5;font-size:11px">ver.2.0.0</span>
     </div>
 
-    <!-- TGB Widget -->
-    <div class="ad-section">
-        <div class="ad-section-title">📺 Реклама — кликни и получи коины</div>
-        <div class="tads-container" id="tads-container-11464"></div>
-        <div class="status-text" id="tgbStatus"></div>
-    </div>
-
-    <!-- Fullscreen Widget -->
-    <div class="ad-section">
-        <button class="btn btn-reward" id="fullscreenBtn">
-            🎬 Смотреть рекламу (+25 коинов)
-        </button>
-        <div class="status-text" id="fullscreenStatus"></div>
-    </div>
-
-    <div class="tads-fullscreen-overlay" id="fullscreen-ad-container"></div>
-
-    <div class="reward-toast" id="rewardToast">+N коинов!</div>
-
-    <!-- Выбор бонуса vBTC (виден когда бонус ещё не выбран) -->
-    <div class="ad-section" id="vbtcBonusSection">
-        <div class="ad-section-title">🎁 Бонусы для игры ₿ vBTC</div>
+    <!-- ══ ГЛАВНАЯ: выбор бонуса (без рекламной вставки) ══ -->
+    <div class="section" id="bonusSelectSection">
+        <div class="section-title">🎁 Бонусы за просмотр рекламы</div>
         <button class="btn btn-primary" data-bonus="double_mining">⛏️ Удвоенный майнинг x1.5</button>
         <button class="btn btn-primary" data-bonus="power_boost">⚡ Буст мощности (15 мин)</button>
         <button class="btn btn-primary" data-bonus="extra_activations">➕ Доп. активация майнинга</button>
+        <button class="btn btn-primary" data-bonus="rub_gift">💰 +25 ₽ на баланс</button>
+        <button class="btn btn-primary" data-bonus="elec_free">🛡️ Без электричества (24 ч)</button>
     </div>
 
-    <!-- Кнопка забрать награду -->
-    <div class="ad-section" id="claimSection" style="display:none">
-        <button class="btn btn-claim" id="claimBtn">
-            🪙 Забрать награду
-        </button>
+    <!-- ══ Центр наград (deep links в бота) ══ -->
+    <div class="section" id="rewardsSection">
+        <div class="section-title">🏅 Центр наград</div>
+        <button class="btn btn-reward" id="dailyBtn">📅 Ежедневная награда</button>
+        <button class="btn btn-reward" id="weeklyBtn">📆 Еженедельная награда</button>
+        <div class="status-text">Награды начисляются в боте</div>
     </div>
+
+    <!-- ══ Экран просмотра рекламы (режим бонуса) ══ -->
+    <div class="section hidden" id="adWatchSection">
+        <div class="section-title">📺 Шаг 2 — посмотрите рекламу</div>
+        <div id="tgbSlot"></div>
+        <div class="status-text" id="tgbStatus"></div>
+        <button class="btn btn-reward" id="fullscreenBtn">🎬 Смотреть рекламу</button>
+        <div class="status-text" id="fullscreenStatus"></div>
+        <div class="status-text" style="opacity:0.45;font-size:12px">
+            Бонус выдаётся только за полный просмотр рекламы
+        </div>
+    </div>
+
+    <!-- ══ Экран коинов (?coins=1 — старый режим) ══ -->
+    <div class="section hidden" id="coinsSection">
+        <div class="section-title">📺 Реклама — кликни и получи коины</div>
+        <div id="coinsTgbSlot"></div>
+        <div class="status-text" id="coinsTgbStatus"></div>
+        <button class="btn btn-reward" id="coinsFsBtn">🎬 Смотреть рекламу (+25 коинов)</button>
+        <div class="status-text" id="coinsFsStatus"></div>
+    </div>
+
+    <!-- ══ Кнопка забрать (появляется после засчитанного просмотра) ══ -->
+    <div class="section" id="claimSection" style="display:none">
+        <button class="btn btn-claim" id="claimBtn">🎁 Забрать бонус</button>
+    </div>
+
+    <!-- Кнопка "назад к бонусам" в режиме просмотра -->
+    <div class="section hidden" id="backToBonusSection">
+        <button class="btn btn-dim" id="backToBonusBtn">⬅️ Выбрать другой бонус</button>
+    </div>
+
+    <div class="tads-fullscreen-overlay" id="fullscreen-ad-container"></div>
+    <div class="reward-toast" id="rewardToast">+N</div>
 
     <script>
     (function() {
         // === CONFIG ===
-        const TGB_WIDGET_ID = 11464;                     // TGB баннер
-        const FULLSCREEN_WIDGET_ID = 11466;               // Fullscreen реклама
-        const BOT_USERNAME = 'MusorkaBMB_bot';             // username бота (без @)
+        const TGB_WIDGET_ID = 11464;
+        const FULLSCREEN_WIDGET_ID = 11466;
+        const BOT_USERNAME = 'MusorkaBMB_bot';
         const COIN_PER_TGB_CLICK = 5;
         const COIN_PER_FULLSCREEN = 25;
 
-        // Подписи vBTC-бонусов (для отображения)
         const VBTC_BONUS_LABELS = {
             'double_mining': '⛏️ Удвоенный майнинг x1.5',
             'power_boost': '⚡ Буст мощности',
-            'extra_activations': '➕ Доп. активация майнинга'
+            'extra_activations': '➕ Доп. активация майнинга',
+            'rub_gift': '💰 +25 ₽ на баланс',
+            'elec_free': '🛡️ Без электричества (24 ч)'
         };
 
         // === Telegram WebApp init ===
         const tg = window.Telegram ? window.Telegram.WebApp : null;
-        if (tg) {
-            tg.ready();
-            tg.expand();
-            tg.setBackgroundColor && tg.setBackgroundColor('#0f0f0f');
-        }
-
+        if (tg) { tg.ready(); tg.expand(); tg.setBackgroundColor && tg.setBackgroundColor('#0f0f0f'); }
         const user = tg ? tg.initDataUnsafe : null;
-        const telegramId = user ? String(user.id) : null;
-        // start_param может быть 'balance_N' или 'claim_N'
         const startParam = user ? (user.start_param || '') : '';
 
-        // === Режим vBTC-бонуса: ?vbtc_bonus=<type> в query string ===
+        // === Режимы ===
         const urlParams = new URLSearchParams(window.location.search);
         const vbtcBonus = urlParams.get('vbtc_bonus') || '';
+        const isCoinsMode = urlParams.get('coins') === '1' || (startParam && startParam.startsWith('balance_'));
         const isVbtcMode = vbtcBonus && VBTC_BONUS_LABELS.hasOwnProperty(vbtcBonus);
 
-        // === UI helpers ===
-        function showStatus(msg) {
-            const el = document.getElementById('tgbStatus');
-            if (el) el.textContent = msg;
-        }
-
-        function showTgbStatus(msg) {
-            const el = document.getElementById('tgbStatus');
-            if (el) el.textContent = msg;
-        }
-
-        function showFullscreenStatus(msg) {
-            const el = document.getElementById('fullscreenStatus');
-            if (el) el.textContent = msg;
-        }
-
-        function showRewardToast(amount) {
-            const toast = document.getElementById('rewardToast');
-            toast.textContent = '+' + amount + ' коинов!';
-            toast.classList.add('show');
-            setTimeout(function() { toast.classList.remove('show'); }, 2000);
-        }
-
-        // Накопленные коины (в localStorage — только для UI, реальный баланс в боте)
         let pendingReward = 0;
-        // В режиме vBTC-бонуса засчитываем факт просмотра (не коины)
-        let adWatched = false;
+        let adWatched = false;          // только полный просмотр fullscreen открывает клейм
 
-        function updateBalance() {
-            if (isVbtcMode) return; // в бонусном режиме баланс коинов не показываем
+        function el(id) { return document.getElementById(id); }
+        function show(id, v) { const e = el(id); if (e) e.style.display = v ? 'block' : 'none'; e && e.classList.toggle('hidden', !v); }
+        function setTxt(id, t) { const e = el(id); if (e) e.textContent = t; }
+        function toast(t) {
+            const x = el('rewardToast'); x.textContent = t;
+            x.classList.add('show'); setTimeout(() => x.classList.remove('show'), 2000);
+        }
+        function openTg(url) { if (tg) tg.openTelegramLink(url); else window.open(url, '_blank'); }
+
+        // ══ РЕЖИМ 1: главная — выбор бонуса ══
+        if (!isVbtcMode && !isCoinsMode) {
+            show('bonusSelectSection', true);
+            show('rewardsSection', true);
+            document.querySelectorAll('#bonusSelectSection [data-bonus]').forEach(function(b) {
+                b.addEventListener('click', function() {
+                    window.location.search = '?vbtc_bonus=' + b.getAttribute('data-bonus');
+                });
+            });
+            el('dailyBtn').addEventListener('click', function() {
+                openTg('https://t.me/' + BOT_USERNAME + '?start=vbtc_daily');
+            });
+            el('weeklyBtn').addEventListener('click', function() {
+                openTg('https://t.me/' + BOT_USERNAME + '?start=vbtc_weekly');
+            });
+            return; // реклама не инициализируется на главной
+        }
+
+        // ══ РЕЖИМ 2: просмотр рекламы за бонус ══
+        if (isVbtcMode) {
+            show('adWatchSection', true);
+            show('backToBonusSection', true);
+            el('headerLabel').textContent = 'Шаг 1 — бонус выбран';
+            el('coinBalance').textContent = '🎁';
+            const badge = el('bonusBadge');
+            badge.style.display = 'block';
+            badge.textContent = VBTC_BONUS_LABELS[vbtcBonus];
+            el('infoCard').innerHTML =
+                '<b>' + VBTC_BONUS_LABELS[vbtcBonus] + '</b><br>' +
+                'Досмотрите fullscreen-рекламу до конца —<br>кнопка «Забрать бонус» появится автоматически.<br>' +
+                '<span style="opacity:0.5;font-size:11px">ver.2.0.0</span>';
+            el('backToBonusBtn').addEventListener('click', function() {
+                window.location.search = '';
+            });
+        }
+
+        // ══ РЕЖИМ 3: коины (?coins=1) ══
+        if (isCoinsMode) {
+            show('coinsSection', true);
+            el('headerLabel').textContent = 'Ваши коины';
             let realBalance = 0;
             if (startParam && startParam.startsWith('balance_')) {
                 realBalance = parseInt(startParam.replace('balance_', ''), 10) || 0;
             }
-            document.getElementById('coinBalance').textContent = realBalance + pendingReward;
+            el('coinBalance').textContent = realBalance;
+            el('infoCard').innerHTML =
+                '<b>5 коинов</b> за клик по рекламе (TGB)<br>' +
+                '<b>25 коинов</b> за просмотр Fullscreen рекламы<br>' +
+                'Нажмите «Забрать награду» после просмотра.<br>' +
+                '<span style="opacity:0.5;font-size:11px">ver.2.0.0</span>';
         }
 
-        // Добавить награду и показать кнопку «Забрать»
-        function addReward(amount, type) {
+        function updateCoinBalance() {
+            if (!isCoinsMode) return;
+            let realBalance = 0;
+            if (startParam && startParam.startsWith('balance_')) {
+                realBalance = parseInt(startParam.replace('balance_', ''), 10) || 0;
+            }
+            el('coinBalance').textContent = realBalance + pendingReward;
+        }
+
+        function showClaim() {
+            show('claimSection', true);
+            const btn = el('claimBtn');
+            if (isVbtcMode) btn.textContent = '🎁 Забрать бонус: ' + VBTC_BONUS_LABELS[vbtcBonus];
+            else btn.textContent = '🪙 Забрать награду (' + pendingReward + ' коинов)';
+        }
+
+        // Награда за ПОЛНЫЙ просмотр fullscreen — единственный способ открыть клейм бонуса
+        function onFullscreenReward() {
             if (isVbtcMode) {
-                // Бонусный режим: просмотр засчитан → показать «Забрать бонус»
                 adWatched = true;
-                showRewardToast(amount); // визуальный фидбек
-                const claimSection = document.getElementById('claimSection');
-                if (claimSection) claimSection.style.display = 'block';
-                const claimBtn = document.getElementById('claimBtn');
-                if (claimBtn) claimBtn.textContent = '🎁 Забрать бонус: ' + VBTC_BONUS_LABELS[vbtcBonus];
-                return;
+                toast('✅ Просмотр засчитан!');
+                showClaim();
+            } else if (isCoinsMode) {
+                pendingReward += COIN_PER_FULLSCREEN;
+                toast('+' + COIN_PER_FULLSCREEN + ' коинов!');
+                updateCoinBalance();
+                showClaim();
             }
-            pendingReward += amount;
-            showRewardToast(amount);
-            updateBalance();
-            const claimSection = document.getElementById('claimSection');
-            if (claimSection) claimSection.style.display = 'block';
-            const claimBtn = document.getElementById('claimBtn');
-            if (claimBtn) claimBtn.textContent = '🪙 Забрать награду (' + pendingReward + ' коинов)';
         }
 
-        // Отправить награду боту через Telegram deep linking
-        function claimRewards() {
-            if (!BOT_USERNAME) {
-                showStatus('Не настроен username бота!');
+        // TGB-клик засчитывается ТОЛЬКО в режиме коинов (античит: клик ≠ просмотр)
+        function onTgbClick() {
+            if (!isCoinsMode) {
+                setTxt('tgbStatus', 'Клик засчитан, но для бонуса нужен полный просмотр 🎬');
                 return;
             }
+            pendingReward += COIN_PER_TGB_CLICK;
+            toast('+' + COIN_PER_TGB_CLICK + ' коинов!');
+            updateCoinBalance();
+            showClaim();
+            setTxt('coinsTgbStatus', 'TGB: +' + COIN_PER_TGB_CLICK + ' коинов за клик!');
+        }
+
+        function claimRewards() {
             let url;
             if (isVbtcMode) {
                 if (!adWatched) return;
-                // vBTC-бонус: deep link активирует бонус в игре
                 url = 'https://t.me/' + BOT_USERNAME + '?start=vbtc_' + vbtcBonus;
             } else {
                 if (pendingReward <= 0) return;
-                // Коины: deep link начисляет коины в user_coins.json
                 url = 'https://t.me/' + BOT_USERNAME + '?start=claim_' + pendingReward;
             }
-            if (tg) {
-                tg.openTelegramLink(url);
-            } else {
-                window.open(url, '_blank');
-            }
-            pendingReward = 0;
-            adWatched = false;
-            const claimSection = document.getElementById('claimSection');
-            if (claimSection) claimSection.style.display = 'none';
-            updateBalance();
+            openTg(url);
+            pendingReward = 0; adWatched = false;
+            show('claimSection', false);
         }
+        el('claimBtn').addEventListener('click', claimRewards);
 
-        // === TGB Widget (Text-Graphic Block) ===
-        function initTGB() {
-            showTgbStatus('TGB: инициализация...');
-            console.log('[TGB] window.tads:', typeof window.tads);
-            console.log('[TGB] window.tads.init:', window.tads ? typeof window.tads.init : 'N/A');
-
-            if (!window.tads || !window.tads.init) {
-                showTgbStatus('TGB: SDK не загружен! Проверьте https://w.tads.me/widget.js');
-                console.error('[TGB] TADS SDK не найден!');
-                return;
+        // === TGB banner ===
+        function initTGB(slotId, statusId) {
+            setTxt(statusId, 'TGB: загрузка...');
+            // Контейнер с конвенциональным ID создаётся только для активного режима
+            const slot = el(slotId);
+            if (slot) {
+                const c = document.createElement('div');
+                c.className = 'tads-container';
+                c.id = 'tads-container-' + TGB_WIDGET_ID;
+                slot.appendChild(c);
             }
-            if (!TGB_WIDGET_ID) {
-                showTgbStatus('TGB: widget ID не настроен');
-                return;
-            }
-
-            const adsNotFoundCallback = function(reason) {
-                console.log('[TGB] onAdsNotFound:', reason);
-                showTgbStatus('TGB: нет рекламы. Ответ: ' + JSON.stringify(reason));
-            };
-
-            const onClickRewardCallback = function(adId) {
-                console.log('[TGB] onClickReward:', adId);
-                addReward(COIN_PER_TGB_CLICK, 'tgb_click');
-                showTgbStatus('TGB: +' + COIN_PER_TGB_CLICK + ' коинов за клик!');
-            };
-
+            if (!window.tads || !window.tads.init) { setTxt(statusId, 'TGB: SDK не загружен'); return; }
             try {
-                console.log('[TGB] init with widgetId:', TGB_WIDGET_ID, 'type: static');
                 const adController = window.tads.init({
-                    widgetId: TGB_WIDGET_ID,
-                    type: 'static',
-                    debug: true,
-                    onClickReward: onClickRewardCallback,
-                    onAdsNotFound: adsNotFoundCallback
+                    widgetId: TGB_WIDGET_ID, type: 'static', debug: false,
+                    onClickReward: function() { onTgbClick(); },
+                    onAdsNotFound: function(r) { setTxt(statusId, 'TGB: нет рекламы'); }
                 });
-                console.log('[TGB] adController:', adController);
-
                 adController.loadAd()
-                    .then(function(res) { console.log('[TGB] loadAd OK:', res); return adController.showAd(); })
-                    .then(function(res) { console.log('[TGB] showAd OK:', res); showTgbStatus('TGB: реклама загружена — кликните для награды'); })
-                    .catch(function(err) {
-                        console.log('[TGB] error:', err);
-                        showTgbStatus('TGB: ошибка: ' + JSON.stringify(err));
-                    });
-            } catch(e) {
-                console.log('[TGB] init error:', e);
-                showTgbStatus('TGB: init error: ' + e.message);
-            }
+                    .then(function() { return adController.showAd(); })
+                    .then(function() { setTxt(statusId, 'Реклама загружена'); })
+                    .catch(function(e) { setTxt(statusId, 'TGB: ошибка'); });
+            } catch(e) { setTxt(statusId, 'TGB: init error'); }
         }
 
-        // === Fullscreen Widget ===
-        function initFullscreen() {
-            console.log('[FS] window.tads:', typeof window.tads);
-            if (!window.tads || !window.tads.init) {
-                showFullscreenStatus('Fullscreen: SDK не загружен!');
-                return;
-            }
-            if (!FULLSCREEN_WIDGET_ID) {
-                showFullscreenStatus('Fullscreen: widget ID не настроен');
-                return;
-            }
-
-            const btn = document.getElementById('fullscreenBtn');
+        // === Fullscreen ===
+        function initFullscreen(btnId, statusId) {
+            const btn = el(btnId);
             if (!btn) return;
-
-            const onShowRewardCallback = function(result) {
-                console.log('[FS] onShowReward:', result);
-                var overlay = document.getElementById('fullscreen-ad-container');
-                if (overlay) overlay.classList.remove('active');
-                addReward(COIN_PER_FULLSCREEN, 'fullscreen_view');
-                showFullscreenStatus('Fullscreen: реклама просмотрена!');
-            };
-
-            const onAdsNotFound = function(reason) {
-                console.log('[FS] onAdsNotFound:', reason);
-                var overlay = document.getElementById('fullscreen-ad-container');
-                if (overlay) overlay.classList.remove('active');
-                showFullscreenStatus('Fullscreen: нет рекламы. Ответ: ' + JSON.stringify(reason));
-            };
-
+            if (!window.tads || !window.tads.init) { setTxt(statusId, 'Fullscreen: SDK не загружен'); return; }
             let adController = null;
-
             try {
-                console.log('[FS] init with widgetId:', FULLSCREEN_WIDGET_ID, 'type: fullscreen');
                 adController = window.tads.init({
-                  widgetId: FULLSCREEN_WIDGET_ID,
-                  type: 'fullscreen',
-                  debug: true,
-                    onShowReward: onShowRewardCallback,
-                    onAdsNotFound: onAdsNotFound
+                    widgetId: FULLSCREEN_WIDGET_ID, type: 'fullscreen', debug: false,
+                    onShowReward: function() {
+                        const ov = el('fullscreen-ad-container');
+                        if (ov) ov.classList.remove('active');
+                        onFullscreenReward();
+                    },
+                    onAdsNotFound: function() {
+                        const ov = el('fullscreen-ad-container');
+                        if (ov) ov.classList.remove('active');
+                        setTxt(statusId, 'Fullscreen: нет рекламы, попробуйте позже');
+                    }
                 });
-                console.log('[FS] adController:', adController);
-            } catch(e) {
-                console.log('[FS] init error:', e);
-                showFullscreenStatus('Fullscreen: init error: ' + e.message);
-                return;
-            }
+            } catch(e) { setTxt(statusId, 'Fullscreen: init error'); return; }
 
             btn.addEventListener('click', function() {
-                showFullscreenStatus('Fullscreen: загрузка рекламы...');
-                if (tg) { tg.expand(); }
-                var overlay = document.getElementById('fullscreen-ad-container');
-                if (overlay) overlay.classList.add('active');
-
+                setTxt(statusId, 'Загрузка рекламы...');
+                if (tg) tg.expand();
+                const ov = el('fullscreen-ad-container');
+                if (ov) ov.classList.add('active');
                 if (adController) {
                     adController.loadAd()
-                        .then(function(res) { console.log('[FS] loadAd result:', res); return adController.showAd(); })
-                        .then(function(res) { console.log('[FS] showAd result:', res); showFullscreenStatus('Fullscreen: реклама показывается...'); })
-                        .catch(function(result) {
-                            console.log('[FS] show error:', result);
-                            if (overlay) overlay.classList.remove('active');
-                            showFullscreenStatus('Fullscreen: ошибка: ' + JSON.stringify(result));
+                        .then(function() { return adController.showAd(); })
+                        .then(function() { setTxt(statusId, 'Смотрите до конца...'); })
+                        .catch(function() {
+                            if (ov) ov.classList.remove('active');
+                            setTxt(statusId, 'Fullscreen: ошибка показа');
                         });
                 }
             });
         }
 
-        // === Режим vBTC-бонуса: настройка UI ===
         if (isVbtcMode) {
-            document.getElementById('headerLabel').textContent = 'Бонус за рекламу';
-            document.getElementById('coinBalance').textContent = '🎁';
-            var badge = document.getElementById('bonusBadge');
-            badge.style.display = 'block';
-            badge.textContent = VBTC_BONUS_LABELS[vbtcBonus];
-            document.getElementById('infoCard').innerHTML =
-                '<b>' + VBTC_BONUS_LABELS[vbtcBonus] + '</b><br>' +
-                'Посмотрите рекламу (клик по баннеру или fullscreen),<br>' +
-                'затем нажмите «Забрать бонус».<br>' +
-                '<span style="opacity:0.5;font-size:11px">ver.1.2.0</span>';
-            var fsBtn = document.getElementById('fullscreenBtn');
-            if (fsBtn) fsBtn.textContent = '🎬 Смотреть рекламу для бонуса';
-            // Бонус уже выбран — скрываем меню выбора
-            var bonusSection = document.getElementById('vbtcBonusSection');
-            if (bonusSection) bonusSection.style.display = 'none';
+            initTGB('tgbSlot', 'tgbStatus');
+            initFullscreen('fullscreenBtn', 'fullscreenStatus');
+        } else if (isCoinsMode) {
+            initTGB('coinsTgbSlot', 'coinsTgbStatus');
+            initFullscreen('coinsFsBtn', 'coinsFsStatus');
         }
 
-        // === Кнопки выбора vBTC-бонуса ===
-        document.querySelectorAll('#vbtcBonusSection [data-bonus]').forEach(function(b) {
-            b.addEventListener('click', function() {
-                var t = b.getAttribute('data-bonus');
-                if (window.location.search.indexOf('vbtc_bonus=') !== -1) {
-                    // уже в бонусном режиме — просто сменить тип
-                    window.location.search = '?vbtc_bonus=' + t;
-                } else {
-                    window.location.search = '?vbtc_bonus=' + t;
-                }
-            });
-        });
-
-        // === Кнопка «Забрать награду» ===
-        const claimBtn = document.getElementById('claimBtn');
-        if (claimBtn) {
-            claimBtn.addEventListener('click', claimRewards);
-        }
-
-        // === Init ===
-        updateBalance();
-        initTGB();
-        initFullscreen();
-
-        // Listen for Telegram theme changes
-        if (tg) {
-            tg.onEvent('themeChanged', function() {
-                // Theme is applied via CSS variables automatically
-            });
-        }
+        if (tg) { tg.onEvent('themeChanged', function() {}); }
     })();
     </script>
 </body>
